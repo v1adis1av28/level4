@@ -2,6 +2,7 @@ package server
 
 import (
 	"eventCalendar/internal/config"
+	"eventCalendar/internal/handlers"
 	"eventCalendar/internal/storage"
 	"net/http"
 
@@ -47,8 +48,8 @@ func (s *Server) setupRoutes() {
 	// GET /events_for_day — получить все события на день;
 	// GET /events_for_week — события на неделю;
 	// GET /events_for_month — события на месяц.
-	// s.Router.POST("/create_event", s.CreateEventHandler)
-	// s.Router.POST("/update_event", s.UpdateEventHandler)
+	s.Router.POST("/create_event", handlers.CreateEventHandler(s.Storage))
+	s.Router.POST("/update_event", handlers.UpdateEventHandler(s.Storage))
 	// s.Router.POST("/delete_event", s.DeleteEventHandler)
 	// s.Router.GET("/events_for_day", s.GetEventsForDayHandler)
 	// s.Router.GET("/events_for_week", s.GetEventsForWeekHandler)
