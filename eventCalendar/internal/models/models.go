@@ -7,11 +7,12 @@ const (
 )
 
 type Event struct {
-	ID          int    `json:"id,omitempty"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Date        string `json:"date"`
-	Status      string `json:"status"`
+	ID               int    `json:"id,omitempty"`
+	Name             string `json:"name"`
+	Description      string `json:"description"`
+	Date             string `json:"date"`
+	Status           string `json:"status"`
+	HaveNotification bool   `json:"have_notification"`
 }
 
 type ErrorResponse struct {

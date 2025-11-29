@@ -18,7 +18,7 @@ func IsEventValid(event *models.Event) (bool, error) {
 		return false, fmt.Errorf("wrong format of date string")
 	}
 
-	if date.After(time.Now()) {
+	if date.Before(time.Now()) {
 		return false, fmt.Errorf("you can`t create events in past")
 	}
 
@@ -34,7 +34,7 @@ func IsModRequestValid(req *models.EventModificationRequest) (bool, error) {
 		return false, fmt.Errorf("wrong format of date string")
 	}
 
-	if date.After(time.Now()) {
+	if date.Before(time.Now()) {
 		return false, fmt.Errorf("you can`t create events in past")
 	}
 

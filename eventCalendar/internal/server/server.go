@@ -41,17 +41,10 @@ func New(Config *config.Config, storage *storage.Storage) *Server {
 }
 
 func (s *Server) setupRoutes() {
-	//	POST /create_event — создание нового события;
-	//
-	// POST /update_event — обновление существующего;
-	// POST /delete_event — удаление;
-	// GET /events_for_day — получить все события на день;
-	// GET /events_for_week — события на неделю;
-	// GET /events_for_month — события на месяц.
 	s.Router.POST("/create_event", handlers.CreateEventHandler(s.Storage))
 	s.Router.POST("/update_event", handlers.UpdateEventHandler(s.Storage))
-	// s.Router.POST("/delete_event", s.DeleteEventHandler)
-	// s.Router.GET("/events_for_day", s.GetEventsForDayHandler)
-	// s.Router.GET("/events_for_week", s.GetEventsForWeekHandler)
-	// s.Router.GET("/events_for_month", s.GetEventsForMonthHandler)
+	s.Router.POST("/delete_event", handlers.DeleteEventHandler(s.Storage))
+	s.Router.GET("/events_for_day", handlers.GetEventsForDayHandler(s.Storage))
+	s.Router.GET("/events_for_week", handlers.GetEventsForWeekHandler(s.Storage))
+	s.Router.GET("/events_for_month", handlers.GetEventsForMonthHandler(s.Storage))
 }
