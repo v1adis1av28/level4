@@ -225,30 +225,59 @@ func (s *Storage) ArchiveOldEvents(ctx context.Context, cutoffTime time.Time) er
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction for archiving: %w", err)
 	}
-	defer tx.Rollback(ctx)
+	defer func() {
+		if err != nil {
+			tx.Rollback(ctx)
+		}
+	}()
 
 	insertQuery := `
-    INSERT INTO ARCHIVE (EVENT_ID, ADDED_AT) SELECT ID, $4
-    FROM EVENTS WHERE (STATUS = $1 OR STATUS = $2) AND EVENT_DATE < $3;`
-	_, err = tx.Exec(ctx, insertQuery, models.StatusCompleted, models.StatusCancelled, cutoffTime, time.Now())
+        INSERT INTO ARCHIVE (EVENT_ID, ADDED_AT)
+        SELECT ID, $1
+        FROM EVENTS
+        WHERE (STATUS = $2 OR STATUS = $3) AND EVENT_DATE < $4;
+    `
+	commandTag, err := tx.Exec(ctx, insertQuery, time.Now(), models.StatusCompleted, models.StatusCancelled, cutoffTime)
 	if err != nil {
-		return fmt.Errorf("failed to insert old events into archive: %w", err)
+		return fmt.Errorf("failed to insert old event IDs into archive table: %w", err)
 	}
+	rowsInserted := commandTag.RowsAffected()
 
 	deleteQuery := `
         DELETE FROM EVENTS
         WHERE (STATUS = $1 OR STATUS = $2) AND EVENT_DATE < $3;
     `
-	commandTag, err := tx.Exec(ctx, deleteQuery, models.StatusCompleted, models.StatusCancelled, cutoffTime)
+	commandTag, err = tx.Exec(ctx, deleteQuery, models.StatusCompleted, models.StatusCancelled, cutoffTime)
 	if err != nil {
 		return fmt.Errorf("failed to delete old events from main table: %w", err)
+	}
+	rowsDeleted := commandTag.RowsAffected()
+
+	if rowsInserted != rowsDeleted {
+		err = fmt.Errorf("mismatch in rows inserted (%d) and deleted (%d) during archiving", rowsInserted, rowsDeleted)
+		return err
 	}
 
 	if err = tx.Commit(ctx); err != nil {
 		return fmt.Errorf("failed to commit transaction for archiving: %w", err)
 	}
 
-	rowsAffected := commandTag.RowsAffected()
-	logger.Info(fmt.Sprintf("Archived %d old events before %v", rowsAffected, cutoffTime))
+	logger.Info(fmt.Sprintf("Archived %d old events before %v", rowsDeleted, cutoffTime))
 	return nil
+}
+
+func (s *Storage) GetEventByID(id int) (*models.Event, error) {
+	query := "SELECT ID, NAME, DESCRIPTION, EVENT_DATE, STATUS, HAVE_NOTIFICATION FROM EVENTS WHERE ID = $1;"
+	row := s.DB.QueryRow(context.Background(), query, id)
+	var date time.Time
+	var event models.Event
+	err := row.Scan(&event.ID, &event.Name, &event.Description, &date, &event.Status, &event.HaveNotification)
+	event.Date = date.Format("2006-01-02")
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, fmt.Errorf("event with id %d not found", id)
+		}
+		return nil, fmt.Errorf("error scanning event: %w", err)
+	}
+	return &event, nil
 }
