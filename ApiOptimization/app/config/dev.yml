@@ -1,0 +1,14 @@
+app:
+  port: ":8080"
+
+database:
+  postgres_url: "postgres://postgres:postgres@db:5432/advertisements?sslmode=disable"
+
+redis:
+  address: "redis:6379"
+  password: ""
+
+kafka:
+  broker_address: "kafka:9092"
+  topic: "orders"
+  group_id: "users"

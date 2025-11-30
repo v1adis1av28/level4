@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  db_test:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: advertisements_test
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  kafka_test:
+    image: wurstmeister/kafka
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_test:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper_test:2181
+    depends_on:
+      - zookeeper_test
+
+  zookeeper_test:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2182:2181"
+
+  redis_test:
+    image: redis:6.2
+
+  migrate_test:
+    image: migrate/migrate
+    depends_on:
+      db_test:
+        condition: service_healthy
+    volumes:
+      - ./app/migrations/:/migrations
+    command: ["-path", "/migrations/", "-database", "postgres://postgres:postgres@db_test:5432/advertisements_test?sslmode=disable", "up"]
