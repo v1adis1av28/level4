@@ -36,9 +36,14 @@ func NewApp(db *database.DB, handler *handlers.OrderHandler, cfg *config.Config)
 		c.Next()
 	})
 
+	router.MaxMultipartMemory = 1 << 20
+
 	server := &http.Server{
-		Addr:    cfg.App.Port,
-		Handler: router,
+		Addr:         cfg.App.Port,
+		Handler:      router,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 5 * time.Second,
+		IdleTimeout:  30 * time.Second,
 	}
 
 	app := &App{

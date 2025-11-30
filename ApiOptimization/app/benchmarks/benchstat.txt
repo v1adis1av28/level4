@@ -1,0 +1,15 @@
+goos: darwin
+goarch: arm64
+pkg: demo/internal/benchmarks
+cpu: Apple M4
+            │ before.txt  │             after.txt              │
+            │   sec/op    │   sec/op     vs base               │
+GetOrder-10   1.473µ ± 3%   1.454µ ± 3%  -1.29% (p=0.030 n=10)
+
+            │  before.txt  │              after.txt               │
+            │     B/op     │     B/op      vs base                │
+GetOrder-10   1.644Ki ± 0%   1.456Ki ± 0%  -11.41% (p=0.000 n=10)
+
+            │ before.txt │             after.txt             │
+            │ allocs/op  │ allocs/op   vs base               │
+GetOrder-10   14.00 ± 0%   13.00 ± 0%  -7.14% (p=0.000 n=10)

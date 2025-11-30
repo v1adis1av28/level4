@@ -1,0 +1,16 @@
+goos: darwin
+goarch: arm64
+pkg: demo/internal/benchmarks
+cpu: Apple M4
+BenchmarkGetOrder-10    	  732249	      1508 ns/op	    1683 B/op	      14 allocs/op
+BenchmarkGetOrder-10    	  809166	      1465 ns/op	    1683 B/op	      14 allocs/op
+BenchmarkGetOrder-10    	  812281	      1508 ns/op	    1683 B/op	      14 allocs/op
+BenchmarkGetOrder-10    	  810780	      1470 ns/op	    1683 B/op	      14 allocs/op
+BenchmarkGetOrder-10    	  777946	      1475 ns/op	    1683 B/op	      14 allocs/op
+BenchmarkGetOrder-10    	  804660	      1520 ns/op	    1683 B/op	      14 allocs/op
+BenchmarkGetOrder-10    	  824696	      1460 ns/op	    1683 B/op	      14 allocs/op
+BenchmarkGetOrder-10    	  809301	      1466 ns/op	    1683 B/op	      14 allocs/op
+BenchmarkGetOrder-10    	  807186	      1532 ns/op	    1683 B/op	      14 allocs/op
+BenchmarkGetOrder-10    	  831595	      1456 ns/op	    1683 B/op	      14 allocs/op
+PASS
+ok  	demo/internal/benchmarks	13.681s

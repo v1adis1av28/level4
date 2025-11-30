@@ -22,6 +22,7 @@ func (oh *OrderHandler) HandleIncomingOrder(c *gin.Context) {
 	decoder := json.NewDecoder(c.Request.Body)
 	decoder.DisallowUnknownFields()
 	err := decoder.Decode(&order)
+	//err := c.ShouldBindJSON(&order)
 	if err != nil {
 		c.JSON(400, gin.H{"error": "bad json"})
 		return
@@ -83,5 +84,5 @@ func (oh *OrderHandler) GetOrderById(c *gin.Context) {
 	orderDTO := models.OrderToDTO(order)
 	c.Writer.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(c.Writer).Encode(orderDTO)
-	// c.JSON(http.StatusOK, orderDTO)//убираем двойное копирование
+	//c.JSON(http.StatusOK, orderDTO) //убираем двойное копирование
 }

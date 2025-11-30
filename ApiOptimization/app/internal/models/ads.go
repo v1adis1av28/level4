@@ -73,21 +73,33 @@ type OrderDTO struct {
 }
 
 func OrderToDTO(o *Order) OrderDTO {
-	items := make([]string, 0, len(o.Items))
-	total := 0.0
-
+	items := []string{}
+	sum := 0
 	for _, i := range o.Items {
 		items = append(items, i.Name)
-		total += i.TotalPrice
+		sum += int(i.TotalPrice)
 	}
-
-	return OrderDTO{
-		OrderUID:        o.OrderUID,
-		TrackNumber:     o.TrackNumber,
-		CustomerID:      o.CustomerID,
-		DeliveryService: o.DeliveryService,
-		DateCreated:     o.DateCreated,
-		Items:           items,
-		TotalPrice:      total,
-	}
+	return OrderDTO{OrderUID: o.OrderUID, TrackNumber: o.TrackNumber,
+		CustomerID: o.CustomerID, DeliveryService: o.DeliveryService,
+		DateCreated: o.DateCreated, Items: items, TotalPrice: float64(sum)}
 }
+
+// func OrderToDTO(o *Order) OrderDTO {
+// 	items := make([]string, 0, len(o.Items))
+// 	total := 0.0
+
+// 	for _, i := range o.Items {
+// 		items = append(items, i.Name)
+// 		total += i.TotalPrice
+// 	}
+
+// 	return OrderDTO{
+// 		OrderUID:        o.OrderUID,
+// 		TrackNumber:     o.TrackNumber,
+// 		CustomerID:      o.CustomerID,
+// 		DeliveryService: o.DeliveryService,
+// 		DateCreated:     o.DateCreated,
+// 		Items:           items,
+// 		TotalPrice:      total,
+// 	}
+// }
